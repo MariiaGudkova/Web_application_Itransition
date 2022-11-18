@@ -1,0 +1,24 @@
+@import url("https://fonts.googleapis.com/css2?family=Jost:wght@400;600&display=swap");
+
+body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-image: url("https://images.unsplash.com/photo-1592312040834-bb0d621713e1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80");
+  background-size: cover;
+  font-family: "Jost", "Inter", "Arial", "Helvetica", sans-serif;
+}
+
+body:before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 2;
+}

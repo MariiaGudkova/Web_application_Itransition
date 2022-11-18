@@ -1,0 +1,11 @@
+{
+  "workbench.settings.editor": "json",
+  "editor.formatOnSave": true,
+  "[javascript, jsx]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAl.eslint": true 
+  },
+  "eslint.validate": ["javascript, jsx"]
+}
