@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
+const { errors } = require("celebrate");
 const routes = require("./routes/index");
 require("dotenv").config();
 
@@ -20,4 +21,5 @@ app.use(express.json());
 app.use(helmet());
 app.use(apiLimiter);
 app.use(routes);
+app.use(errors());
 app.listen(PORT);
