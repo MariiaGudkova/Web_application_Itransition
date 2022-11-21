@@ -1,6 +1,6 @@
 # Web-application-Itransition
 
-Учебное приложение в рамках стажировки в Itransition
+Учебное приложение в рамках стажировки в Itransition.
 
 ## Описание
 
