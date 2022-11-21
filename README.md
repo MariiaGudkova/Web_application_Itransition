@@ -1,6 +1,5 @@
-# Web-application-Itransition
+# Учебное приложение в рамках стажировки в Itransition
 
-Учебное приложение в рамках стажировки в Itransition.
 <img src="https://media.giphy.com/media/xULW8N9O5WD32L5052/giphy.gif" width="400" height="400">
 
 ## Описание
