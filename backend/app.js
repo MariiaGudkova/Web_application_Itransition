@@ -4,6 +4,7 @@ const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const { errors } = require("celebrate");
 const routes = require("./routes/index");
+const { handleCors } = require("./middlewares/handleCors");
 require("dotenv").config();
 
 const { PORT = 5000, MONGO_URL = "mongodb://localhost:27017/usersbd" } =
@@ -20,6 +21,7 @@ mongoose.connect(MONGO_URL);
 app.use(express.json());
 app.use(helmet());
 app.use(apiLimiter);
+app.use(handleCors);
 app.use(routes);
 app.use(errors());
 app.listen(PORT);

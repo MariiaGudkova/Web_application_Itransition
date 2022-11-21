@@ -9,7 +9,7 @@ const {
   NOTFOUND_ERROR_CODE,
   CONFLICT_ERROR_CODE,
   SERVER_ERROR_CODE,
-} = require("../utils/errors");
+} = require("../utils/constants");
 
 const register = (req, res) => {
   const { name, email, password, status } = req.body;
