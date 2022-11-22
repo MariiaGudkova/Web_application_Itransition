@@ -14,27 +14,41 @@ class Api {
     return Promise.reject(`Ошибка: ${res.status}`);
   };
 
-  getAllUsers = (jwt) => {
-    return fetch(`${this._baseUrl}/`, {
+  getUserInfo = () => {
+    return fetch(`${this._baseUrl}/me`, {
+      method: "GET",
+      headers: this._headers,
+    }).then(this._getJsonOnError).then(res => res.data);
+  }
+
+  getAllUsers = () => {
+    return fetch(`${this._baseUrl}/users`, {
       method: 'GET',
       headers: this._headers,
-      body:  JSON.stringify({ jwt }),
     }).then(this._getJsonOnError).then(res => res.data);
   };
 
-  deleteUser = (id) => {
+  deleteUser = (_id) => {
     return fetch(`${this._baseUrl}/deleteUsers`, {
       method: 'DELETE',
       headers: this._headers,
-      body:  JSON.stringify({ id }),
+      body:  JSON.stringify({ _id }),
     }).then(this._getJsonOnError).then(res => res.data);
   };
 
-  blockUser = (id, status) => {
-    return fetch(`${this._baseUrl}/deleteUsers`, {
+  blockUser = (ids, status) => {
+    return fetch(`${this._baseUrl}/blockUsers`, {
       method: 'PATCH',
       headers: this._headers,
-      body:  JSON.stringify({ id, status }),
+      body:  JSON.stringify({ ids, status }),
+    }).then(this._getJsonOnError).then(res => res.data);
+  }
+
+  unblockUser = (_id, status) => {
+    return fetch(`${this._baseUrl}/blockUsers`, {
+      method: 'PATCH',
+      headers: this._headers,
+      body:  JSON.stringify({ _id, status }),
     }).then(this._getJsonOnError).then(res => res.data);
   }
   
