@@ -72,6 +72,30 @@ const login = (req, res) => {
     });
 };
 
+const getUserInfo = (req, res) => {
+  User.findById(req.user._id)
+    .orFail()
+    .then((user) => {
+      res.send({ data: user });
+    })
+    .catch((e) => {
+      if (e instanceof mongoose.Error.CastError) {
+        return res
+          .status(BAD_REQUEST_ERROR_CODE)
+          .send({ message: "Передан некорректный _id пользователя" });
+      }
+      if (e instanceof mongoose.Error.DocumentNotFoundError) {
+        return res
+          .status(NOTFOUND_ERROR_CODE)
+          .send({ message: "Пользователь по указанному _id не найден" });
+      } else {
+        return res
+          .status(SERVER_ERROR_CODE)
+          .send({ message: "На сервере произошла ошибка" });
+      }
+    });
+};
+
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
@@ -109,17 +133,12 @@ const deleteUser = (req, res) => {
 };
 
 const blockUser = (req, res) => {
-  const { status } = req.body;
-  User.findByIdAndUpdate(req.body._id, { status }, { new: true })
+  const { ids, status } = req.body;
+  console.info({ ids, status });
+  User.updateMany({ _id: { $in: ids } }, { status }, { new: true })
     .orFail()
-    .then((user) => {
-      if (user.status === "Block") {
-        return res
-          .status(UNAUTHORIZATION_ERROR_CODE)
-          .send({ message: "Ваш аккаунт заблокирован. Требуется авторизация" });
-      } else {
-        next();
-      }
+    .then(() => {
+      return res.send({ ids });
     })
     .catch((e) => {
       if (e instanceof mongoose.Error.CastError) {
@@ -134,7 +153,7 @@ const blockUser = (req, res) => {
       } else {
         return res
           .status(SERVER_ERROR_CODE)
-          .send({ message: "На сервере произошла ошибка" });
+          .send({ message: "На сервере произошла ошибка", e });
       }
     });
 };
@@ -142,6 +161,7 @@ const blockUser = (req, res) => {
 module.exports = {
   register,
   login,
+  getUserInfo,
   getUsers,
   deleteUser,
   blockUser,
