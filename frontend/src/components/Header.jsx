@@ -2,7 +2,16 @@ import { Link } from "react-router-dom";
 import "./Header.css";
 
 function Header(props) {
-  const { buttonText, linkAdress } = props;
+  const { buttonText, linkAdress, onLogoutUserProfile } = props;
+
+  function handleClick() {
+    if (onLogoutUserProfile) {
+      onLogoutUserProfile();
+    } else {
+      return null;
+    }
+  }
+
   return (
     <header className="px-3 py-2 dark-bg header-container">
       <div className="container">
@@ -18,6 +27,9 @@ function Header(props) {
               <button
                 type="button"
                 className="btn btn-warning bs-success fw-bold header-button"
+                onClick={() => {
+                  handleClick();
+                }}
               >
                 {buttonText}
               </button>

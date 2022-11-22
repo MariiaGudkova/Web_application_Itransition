@@ -11,6 +11,7 @@ function RegistrationForm(props) {
     onSubmit,
     children,
   } = props;
+
   return (
     <div className="registration">
       <p className="fs-1 text-light fw-bold registration-title">

@@ -13,12 +13,15 @@ import Login from "./Login.jsx";
 import Register from "./Register.jsx";
 
 function App() {
-  const [loggedIn, setLoggedIn] = React.useState(true);
-  const [defaultCells, setDefaultSells] = React.useState({});
+  const [currentUser, setCurrentUser] = React.useState({});
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [cells, setCells] = React.useState([]);
+  const [isCheckedAll, setCheckedAll] = React.useState(false);
   const history = useHistory();
 
   React.useEffect(() => {
     if (loggedIn) {
+      getApiUserInfo();
       getApiCellsInfo();
     }
   }, [loggedIn]);
@@ -27,31 +30,35 @@ function App() {
     tokenCheck();
   }, []);
 
-  async function hanldeRegistration(authData) {
+  async function hanldeRegistration(email, password) {
     try {
-      const { email, password } = authData;
-      const response = await register(password, email);
+      const response = await register(email, password);
       if (response.data) {
         history.push(routes.signIn);
-      } else {
-        throw new Error();
       }
     } catch (e) {
       console.error(e);
     }
   }
 
-  async function hanldeAthorization(authData) {
+  async function hanldeLogin(email, password) {
     try {
-      const { email, password } = authData;
-      const response = await authorize(password, email);
+      const response = await authorize(email, password);
       if (response.token) {
         localStorage.setItem("jwt", response.token);
+        setLoggedIn(true);
         api.updateToken(response.token);
         history.push(routes.baseRoute);
-      } else {
-        throw new Error();
       }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function getApiUserInfo() {
+    try {
+      const userInfo = await api.getUserInfo();
+      setCurrentUser(userInfo._id);
     } catch (e) {
       console.error(e);
     }
@@ -59,8 +66,8 @@ function App() {
 
   async function getApiCellsInfo() {
     try {
-      const defaultCells = await api.getAllUsers();
-      setDefaultSells(defaultCells);
+      const cells = await api.getAllUsers();
+      setCells(cells.map((cell) => ({ ...cell, isChecked: false })));
     } catch (e) {
       console.error(e);
     }
@@ -89,20 +96,102 @@ function App() {
     setLoggedIn(false);
   }
 
+  async function deleteUserProfile(_id) {
+    try {
+      const response = await api.deleteUser(_id);
+      if (response.data) {
+        if (currentUser === _id) {
+          logoutUserProfile();
+        }
+        const updateCells = cells.filter((cell) => {
+          return cell._id !== _id;
+        });
+        setCells(updateCells);
+      }
+    } catch (e) {
+      console.error();
+    }
+  }
+
+  async function blockUserProfile() {
+    try {
+      const ids = cells
+        .filter((cell) => cell.isChecked)
+        .map((cell) => cell._id);
+      const response = await api.blockUser(ids, "Заблокирован");
+      if (response.data) {
+        // if (currentUser === ids) {
+        //   logoutUserProfile();
+        // }
+        getApiCellsInfo();
+      }
+    } catch (e) {
+      console.error();
+    }
+  }
+
+  async function unblockUserProfile(_id) {
+    try {
+      const response = await api.unblockUser(_id, "Разблокирован");
+      if (response.data) {
+        if (currentUser === _id) {
+          logoutUserProfile();
+        }
+        const updateCells = cells.map((cell) => {
+          if (cell._id === _id) {
+            return (cell.status = "Разблокирован");
+          }
+        });
+        setCells(updateCells);
+      }
+    } catch (e) {
+      console.error();
+    }
+  }
+
+  function checkAll() {
+    const newCells = cells.map((cell) => ({
+      ...cell,
+      isChecked: !isCheckedAll,
+    }));
+    setCells(newCells);
+    setCheckedAll(!isCheckedAll);
+  }
+
+  function updateCellChecked(id, isChecked) {
+    const newCells = cells.map((cell) =>
+      cell._id === id ? { ...cell, isChecked } : cell
+    );
+    setCells(newCells);
+    setCheckedAll(newCells.every((cell) => cell.isChecked));
+  }
+
   return (
     <div className="main-container">
       <Switch>
         <ProtectedRoute exact path={routes.baseRoute} loggedIn={loggedIn}>
-          <Header buttonText="Выйти" linkAdress={routes.signIn} />
-          <Main />
+          <Header
+            buttonText="Выйти"
+            linkAdress={routes.signIn}
+            onLogoutUserProfile={logoutUserProfile}
+          />
+          <Main
+            cells={cells}
+            isCheckedAll={isCheckedAll}
+            onCheckAll={checkAll}
+            onUpdateCellChecked={updateCellChecked}
+            onUnblockUserClick={unblockUserProfile}
+            onBlockUserClick={blockUserProfile}
+            onDeleteUserClick={deleteUserProfile}
+          />
         </ProtectedRoute>
         <Route path={routes.signUp}>
           <Header buttonText="Войти" linkAdress={routes.signIn} />
-          <Register />
+          <Register onRegistrationSubmit={hanldeRegistration} />
         </Route>
         <Route path={routes.signIn}>
           <Header buttonText="Зарегистрироваться" linkAdress={routes.signUp} />
-          <Login />
+          <Login onLoginSubmit={hanldeLogin} />
         </Route>
       </Switch>
     </div>

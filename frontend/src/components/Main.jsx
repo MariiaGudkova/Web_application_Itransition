@@ -3,49 +3,15 @@ import "./Main.css";
 import TableCell from "./TableCell";
 
 function Main(props) {
-  // const { cells } = props;
-  const cellsDefault = [
-    {
-      id: 1,
-      name: "Vasya",
-      email: "vasya@gmail.com",
-      registrationDate: "18.11.2022",
-      lastLoginDate: "18.11.2022",
-      status: "Block",
-      isChecked: false,
-    },
-    {
-      id: 2,
-      name: "Masha",
-      email: "masha@gmail.com",
-      registrationDate: "16.11.2022",
-      lastLoginDate: "17.11.2022",
-      status: "Unblock",
-      isChecked: false,
-    },
-  ];
-
-  // api.delete(cells.filter(cell => cell.isChecked).map(cell => cell.id));
-
-  const [cells, setCells] = React.useState(cellsDefault);
-  const [isCheckedAll, setCheckedAll] = React.useState(false);
-
-  function checkAll() {
-    const newCells = cells.map((cell) => ({
-      ...cell,
-      isChecked: !isCheckedAll,
-    }));
-    setCells(newCells);
-    setCheckedAll(!isCheckedAll);
-  }
-
-  function updateCellChecked(id, isChecked) {
-    const newCells = cells.map((cell) =>
-      cell.id === id ? { ...cell, isChecked } : cell
-    );
-    setCells(newCells);
-    setCheckedAll(newCells.every((cell) => cell.isChecked));
-  }
+  const {
+    cells,
+    isCheckedAll,
+    onCheckAll,
+    onUpdateCellChecked,
+    onUnblockUserClick,
+    onBlockUserClick,
+    onDeleteUserClick,
+  } = props;
 
   return (
     <div className="d-flex flex-column justify-content-center align-items-center">
@@ -57,14 +23,32 @@ function Main(props) {
         role="group"
         aria-label="Basic mixed styles example"
       >
-        <button type="button" className="btn btn-warning fw-bold">
+        <button
+          type="button"
+          className="btn btn-warning fw-bold"
+          onClick={() => {
+            onUnblockUserClick();
+          }}
+        >
           <i className="bi-unlock-fill"></i>
         </button>
-        <button type="button" className="btn btn-warning fw-bold">
+        <button
+          type="button"
+          className="btn btn-warning fw-bold"
+          onClick={() => {
+            onBlockUserClick();
+          }}
+        >
           <i className="bi-lock-fill"></i>
         </button>
 
-        <button type="button" className="btn btn-warning fw-bold">
+        <button
+          type="button"
+          className="btn btn-warning fw-bold"
+          onClick={() => {
+            onDeleteUserClick();
+          }}
+        >
           <i className="bi-trash3-fill"></i>
         </button>
       </div>
@@ -75,10 +59,12 @@ function Main(props) {
               <input
                 className="form-check-input"
                 type="checkbox"
-                value=""
+                value={isCheckedAll || ""}
                 id="flexCheckIndeterminate"
                 checked={isCheckedAll}
-                onChange={checkAll}
+                onChange={() => {
+                  onCheckAll();
+                }}
               />
               <label
                 className="form-check-label"
@@ -100,8 +86,8 @@ function Main(props) {
             return (
               <TableCell
                 values={cell}
-                key={cell.id}
-                onChange={updateCellChecked}
+                key={cell._id}
+                onChange={onUpdateCellChecked}
               />
             );
           })}

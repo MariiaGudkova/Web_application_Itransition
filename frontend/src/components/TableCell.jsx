@@ -2,7 +2,7 @@ import "./TableCell.css";
 
 function TableCell(props) {
   const {
-    id,
+    _id,
     name,
     email,
     registrationDate,
@@ -12,6 +12,8 @@ function TableCell(props) {
   } = props.values;
 
   const { onChange } = props;
+  const registrDate = new Date(registrationDate).toLocaleString();
+  const loginDate = new Date(lastLoginDate).toLocaleString();
 
   return (
     <tr>
@@ -19,17 +21,17 @@ function TableCell(props) {
         <input
           className="form-check-input"
           type="checkbox"
-          value=""
+          value={isChecked || ""}
           id="flexCheckIndeterminate"
           checked={isChecked}
-          onChange={() => onChange(id, !isChecked)}
+          onChange={() => onChange(_id, !isChecked)}
         />
       </td>
-      <td>{id}</td>
+      <td>{_id}</td>
       <td>{name}</td>
       <td>{email}</td>
-      <td>{registrationDate}</td>
-      <td>{lastLoginDate}</td>
+      <td>{registrDate}</td>
+      <td>{loginDate}</td>
       <td>{status}</td>
     </tr>
   );
