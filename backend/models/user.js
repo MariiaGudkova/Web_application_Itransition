@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema(
   },
   {
     versionKey: false,
-    timestamps: { createdAt: "registarionDate", updatedAt: "lastLoginDate" },
+    timestamps: { createdAt: "registrationDate", updatedAt: "lastLoginDate" },
   }
 );
 
