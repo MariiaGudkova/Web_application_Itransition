@@ -4,6 +4,7 @@ const auth = require("../middlewares/auth");
 const {
   register,
   login,
+  getUserInfo,
   getUsers,
   deleteUser,
   blockUser,
@@ -29,8 +30,10 @@ router.post(
   }),
   login
 );
-router.get("/", auth, getUsers);
-router.delete("/deleteUsers", auth, deleteUser);
-router.patch("/blockUsers", auth, blockUser);
+router.use(auth);
+router.get("/users", getUsers);
+router.get("/me", getUserInfo);
+router.delete("/deleteUsers", deleteUser);
+router.patch("/blockUsers", blockUser);
 
 module.exports = router;
