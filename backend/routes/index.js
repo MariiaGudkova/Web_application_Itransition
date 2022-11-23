@@ -6,8 +6,9 @@ const {
   login,
   getUserInfo,
   getUsers,
-  deleteUser,
-  blockUser,
+  deleteUsers,
+  blockUsers,
+  unblockUsers,
 } = require("../controllers/users");
 
 router.post(
@@ -33,7 +34,8 @@ router.post(
 router.use(auth);
 router.get("/users", getUsers);
 router.get("/me", getUserInfo);
-router.delete("/deleteUsers", deleteUser);
-router.patch("/blockUsers", blockUser);
+router.delete("/deleteUsers", deleteUsers);
+router.patch("/blockUsers", blockUsers);
+router.patch("/unblockUsers", unblockUsers);
 
 module.exports = router;
