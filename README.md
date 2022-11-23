@@ -20,3 +20,5 @@
 <a href="https://mariiagudkova.github.io/Web_application_Itransition/" target="_blank">Приложение</a>
 
 ## Видео
+https://user-images.githubusercontent.com/101827457/203654694-03dc5adc-5ac0-4a2e-81d8-66c342fc67d6.mp4
+
