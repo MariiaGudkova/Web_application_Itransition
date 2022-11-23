@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/user");
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 const { UNAUTHORIZATION_ERROR_CODE } = require("../utils/constants");
@@ -7,7 +8,7 @@ module.exports = (req, res, next) => {
   const { authorization } = req.headers;
   try {
     if (!authorization || !authorization.startsWith("Bearer ")) {
-      Promise.reject();
+      throw "No authorization header";
     }
     const token = authorization.replace("Bearer ", "");
     const payload = jwt.verify(
@@ -15,10 +16,23 @@ module.exports = (req, res, next) => {
       NODE_ENV === "production" ? JWT_SECRET : "dev-secret"
     );
     req.user = payload;
-    next();
+    User.findById(payload._id)
+      .orFail()
+      .then((user) => {
+        if (user.status === "Разблокирован") {
+          next();
+        } else {
+          throw "User not active error";
+        }
+      })
+      .catch((e) => {
+        return res
+          .status(UNAUTHORIZATION_ERROR_CODE)
+          .send({ message: "Authorization required" });
+      });
   } catch (e) {
     return res
       .status(UNAUTHORIZATION_ERROR_CODE)
-      .send({ message: "Необходима авторизация" });
+      .send({ message: "Authorization required" });
   }
 };
