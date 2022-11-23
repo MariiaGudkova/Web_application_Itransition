@@ -61,7 +61,11 @@ function App() {
       const userInfo = await api.getUserInfo();
       setCurrentUser(userInfo._id);
     } catch (e) {
-      console.error(e);
+      if (e.status === 401) {
+        logoutUserProfile();
+      } else {
+        console.error(e);
+      }
     }
   }
 
@@ -70,7 +74,11 @@ function App() {
       const cells = await api.getAllUsers();
       setCells(cells.map((cell) => ({ ...cell, isChecked: false })));
     } catch (e) {
-      console.error(e);
+      if (e.status === 401) {
+        logoutUserProfile();
+      } else {
+        console.error(e);
+      }
     }
   }
 
@@ -108,13 +116,17 @@ function App() {
       });
       setCells(updateCells);
     } catch (e) {
-      console.error();
+      if (e.status === 401) {
+        logoutUserProfile();
+      } else {
+        console.error(e);
+      }
     }
   }
 
   async function blockUserProfile() {
     try {
-      const response = await api.blockUser(ids, "Заблокирован");
+      const response = await api.blockUser(ids);
       if (ids.includes(currentUser)) {
         logoutUserProfile();
       }
@@ -127,13 +139,17 @@ function App() {
       });
       setCells(updateCells);
     } catch (e) {
-      console.error();
+      if (e.status === 401) {
+        logoutUserProfile();
+      } else {
+        console.error(e);
+      }
     }
   }
 
   async function unblockUserProfile() {
     try {
-      const response = await api.unblockUser(ids, "Разблокирован");
+      const response = await api.unblockUser(ids);
       const updateCells = cells.map((cell) => {
         if (ids.includes(cell._id)) {
           return { ...cell, status: "Разблокирован" };
@@ -143,7 +159,11 @@ function App() {
       });
       setCells(updateCells);
     } catch (e) {
-      console.error();
+      if (e.status === 401) {
+        logoutUserProfile();
+      } else {
+        console.error(e);
+      }
     }
   }
 
