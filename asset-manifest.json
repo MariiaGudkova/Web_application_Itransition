@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/Web_application_Itransition/static/css/main.74dab327.css",
+    "main.js": "/Web_application_Itransition/static/js/main.a0e70568.js",
+    "static/js/787.7f71cd58.chunk.js": "/Web_application_Itransition/static/js/787.7f71cd58.chunk.js",
+    "index.html": "/Web_application_Itransition/index.html",
+    "main.74dab327.css.map": "/Web_application_Itransition/static/css/main.74dab327.css.map",
+    "main.a0e70568.js.map": "/Web_application_Itransition/static/js/main.a0e70568.js.map",
+    "787.7f71cd58.chunk.js.map": "/Web_application_Itransition/static/js/787.7f71cd58.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.74dab327.css",
+    "static/js/main.a0e70568.js"
+  ]
+}
