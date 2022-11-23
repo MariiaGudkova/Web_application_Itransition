@@ -11,7 +11,7 @@ class Api {
     if (res.ok) {
       return res.json();
     }
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return Promise.reject({status: res.status, message: `Ошибка: ${res.status}}`});
   };
 
   getUserInfo = () => {
@@ -36,19 +36,19 @@ class Api {
     }).then(this._getJsonOnError).then(res => res.data);
   };
 
-  blockUser = (ids, status) => {
+  blockUser = (ids) => {
     return fetch(`${this._baseUrl}/blockUsers`, {
       method: 'PATCH',
       headers: this._headers,
-      body:  JSON.stringify({ ids, status }),
+      body:  JSON.stringify({ ids }),
     }).then(this._getJsonOnError).then(res => res.data);
   }
 
-  unblockUser = (ids, status) => {
-    return fetch(`${this._baseUrl}/blockUsers`, {
+  unblockUser = (ids) => {
+    return fetch(`${this._baseUrl}/unblockUsers`, {
       method: 'PATCH',
       headers: this._headers,
-      body:  JSON.stringify({ ids, status }),
+      body:  JSON.stringify({ ids }),
     }).then(this._getJsonOnError).then(res => res.data);
   }
   
