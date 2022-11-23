@@ -20,5 +20,3 @@
 <a href="https://mariiagudkova.github.io/Web_application_Itransition/" target="_blank">Приложение</a>
 
 ## Видео
-
-<video src='./video_for_Readme/video.mp4' width="400" height="400" >
