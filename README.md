@@ -18,3 +18,7 @@
 ## Ссылка на Github Pages <img src="https://media.giphy.com/media/quS68UvJykTEiZLF5A/giphy.gif" width="100" height="100">
 
 <a href="https://mariiagudkova.github.io/Web_application_Itransition/" target="_blank">Приложение</a>
+
+## Видео
+
+<video src='./video_for_Readme/video.mp4' width="400" height="400" >
