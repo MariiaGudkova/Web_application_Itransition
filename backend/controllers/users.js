@@ -51,6 +51,11 @@ const login = (req, res) => {
     .select("+password")
     .orFail()
     .then((user) => {
+      if (user.status === "Заблокирован") {
+        return res
+          .status(UNAUTHORIZATION_ERROR_CODE)
+          .send({ message: "Пользователь был заблокирован. Доступ запрещен" });
+      }
       bcrypt
         .compare(password, user.password)
         .then((matched) => {
@@ -107,13 +112,10 @@ const getUsers = (req, res) => {
 };
 
 const deleteUser = (req, res) => {
-  User.findById(req.body._id)
+  const { ids } = req.body;
+  User.deleteMany({ _id: { $in: ids } }, { new: true })
     .orFail()
-    .then((user) => {
-      return user
-        .remove()
-        .then(() => res.send({ message: "Пользователь удален" }));
-    })
+    .then(() => res.send({ message: "Успешно" }))
     .catch((e) => {
       if (e instanceof mongoose.Error.CastError) {
         return res
@@ -134,11 +136,10 @@ const deleteUser = (req, res) => {
 
 const blockUser = (req, res) => {
   const { ids, status } = req.body;
-  console.info({ ids, status });
   User.updateMany({ _id: { $in: ids } }, { status }, { new: true })
     .orFail()
     .then(() => {
-      return res.send({ ids });
+      return res.send({ message: "Успешно" });
     })
     .catch((e) => {
       if (e instanceof mongoose.Error.CastError) {

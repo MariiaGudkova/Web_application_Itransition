@@ -28,11 +28,11 @@ class Api {
     }).then(this._getJsonOnError).then(res => res.data);
   };
 
-  deleteUser = (_id) => {
+  deleteUser = (ids) => {
     return fetch(`${this._baseUrl}/deleteUsers`, {
       method: 'DELETE',
       headers: this._headers,
-      body:  JSON.stringify({ _id }),
+      body:  JSON.stringify({ ids }),
     }).then(this._getJsonOnError).then(res => res.data);
   };
 
@@ -44,11 +44,11 @@ class Api {
     }).then(this._getJsonOnError).then(res => res.data);
   }
 
-  unblockUser = (_id, status) => {
+  unblockUser = (ids, status) => {
     return fetch(`${this._baseUrl}/blockUsers`, {
       method: 'PATCH',
       headers: this._headers,
-      body:  JSON.stringify({ _id, status }),
+      body:  JSON.stringify({ ids, status }),
     }).then(this._getJsonOnError).then(res => res.data);
   }
   

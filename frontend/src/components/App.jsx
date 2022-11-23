@@ -18,6 +18,7 @@ function App() {
   const [cells, setCells] = React.useState([]);
   const [isCheckedAll, setCheckedAll] = React.useState(false);
   const history = useHistory();
+  const ids = cells.filter((cell) => cell.isChecked).map((cell) => cell._id);
 
   React.useEffect(() => {
     if (loggedIn) {
@@ -96,18 +97,16 @@ function App() {
     setLoggedIn(false);
   }
 
-  async function deleteUserProfile(_id) {
+  async function deleteUserProfile() {
     try {
-      const response = await api.deleteUser(_id);
-      if (response.data) {
-        if (currentUser === _id) {
-          logoutUserProfile();
-        }
-        const updateCells = cells.filter((cell) => {
-          return cell._id !== _id;
-        });
-        setCells(updateCells);
+      const response = await api.deleteUser(ids);
+      if (ids.includes(currentUser)) {
+        logoutUserProfile();
       }
+      const updateCells = cells.filter((cell) => {
+        return !ids.includes(cell._id);
+      });
+      setCells(updateCells);
     } catch (e) {
       console.error();
     }
@@ -115,35 +114,34 @@ function App() {
 
   async function blockUserProfile() {
     try {
-      const ids = cells
-        .filter((cell) => cell.isChecked)
-        .map((cell) => cell._id);
       const response = await api.blockUser(ids, "Заблокирован");
-      if (response.data) {
-        // if (currentUser === ids) {
-        //   logoutUserProfile();
-        // }
-        getApiCellsInfo();
+      if (ids.includes(currentUser)) {
+        logoutUserProfile();
       }
+      const updateCells = cells.map((cell) => {
+        if (ids.includes(cell._id)) {
+          return { ...cell, status: "Заблокирован" };
+        } else {
+          return cell;
+        }
+      });
+      setCells(updateCells);
     } catch (e) {
       console.error();
     }
   }
 
-  async function unblockUserProfile(_id) {
+  async function unblockUserProfile() {
     try {
-      const response = await api.unblockUser(_id, "Разблокирован");
-      if (response.data) {
-        if (currentUser === _id) {
-          logoutUserProfile();
+      const response = await api.unblockUser(ids, "Разблокирован");
+      const updateCells = cells.map((cell) => {
+        if (ids.includes(cell._id)) {
+          return { ...cell, status: "Разблокирован" };
+        } else {
+          return cell;
         }
-        const updateCells = cells.map((cell) => {
-          if (cell._id === _id) {
-            return (cell.status = "Разблокирован");
-          }
-        });
-        setCells(updateCells);
-      }
+      });
+      setCells(updateCells);
     } catch (e) {
       console.error();
     }
