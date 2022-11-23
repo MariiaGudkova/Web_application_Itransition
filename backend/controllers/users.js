@@ -30,17 +30,17 @@ const register = (req, res) => {
     .catch((e) => {
       if (e instanceof mongoose.Error.ValidationError) {
         return res.status(BAD_REQUEST_ERROR_CODE).send({
-          message: "Переданы некорректные данные при создании пользователя",
+          message: "Incorrect data was transmitted when creating user",
         });
       }
       if (e.code === 11000) {
         return res
           .status(CONFLICT_ERROR_CODE)
-          .send({ message: "Пользователь с таким email уже существует" });
+          .send({ message: "User with this email already exists" });
       } else {
         return res
           .status(SERVER_ERROR_CODE)
-          .send({ message: "На сервере произошла ошибка" });
+          .send({ message: "An error occurred on the server" });
       }
     });
 };
@@ -54,7 +54,7 @@ const login = (req, res) => {
       if (user.status === "Заблокирован") {
         return res
           .status(UNAUTHORIZATION_ERROR_CODE)
-          .send({ message: "Пользователь был заблокирован. Доступ запрещен" });
+          .send({ message: "The user was blocked. Access denied" });
       }
       bcrypt
         .compare(password, user.password)
@@ -72,7 +72,7 @@ const login = (req, res) => {
         .catch((e) => {
           return res
             .status(UNAUTHORIZATION_ERROR_CODE)
-            .send({ message: "Неправильная почта или пароль" });
+            .send({ message: "Incorrect email or password" });
         });
     });
 };
@@ -87,16 +87,16 @@ const getUserInfo = (req, res) => {
       if (e instanceof mongoose.Error.CastError) {
         return res
           .status(BAD_REQUEST_ERROR_CODE)
-          .send({ message: "Передан некорректный _id пользователя" });
+          .send({ message: "Invalid user _id passed" });
       }
       if (e instanceof mongoose.Error.DocumentNotFoundError) {
         return res
           .status(NOTFOUND_ERROR_CODE)
-          .send({ message: "Пользователь по указанному _id не найден" });
+          .send({ message: "The user by the specified _id was not found" });
       } else {
         return res
           .status(SERVER_ERROR_CODE)
-          .send({ message: "На сервере произошла ошибка" });
+          .send({ message: "An error occurred on the server" });
       }
     });
 };
@@ -107,54 +107,87 @@ const getUsers = (req, res) => {
     .catch((e) => {
       res
         .status(SERVER_ERROR_CODE)
-        .send({ message: "На сервере произошла ошибка" });
+        .send({ message: "An error occurred on the server" });
     });
 };
 
-const deleteUser = (req, res) => {
+const deleteUsers = (req, res) => {
   const { ids } = req.body;
   User.deleteMany({ _id: { $in: ids } }, { new: true })
     .orFail()
-    .then(() => res.send({ message: "Успешно" }))
+    .then(() => res.send({ message: "User/users deleted" }))
     .catch((e) => {
       if (e instanceof mongoose.Error.CastError) {
         return res
           .status(BAD_REQUEST_ERROR_CODE)
-          .send({ message: "Передан некорректный _id пользователя" });
+          .send({ message: "Invalid user _id passed" });
       }
       if (e instanceof mongoose.Error.DocumentNotFoundError) {
         return res
           .status(NOTFOUND_ERROR_CODE)
-          .send({ message: "Пользователь с указанным _id не найден" });
+          .send({ message: "The user with the specified _id was not found" });
       } else {
         return res
           .status(SERVER_ERROR_CODE)
-          .send({ message: "На сервере произошла ошибка" });
+          .send({ message: "An error occurred on the server" });
       }
     });
 };
 
-const blockUser = (req, res) => {
-  const { ids, status } = req.body;
-  User.updateMany({ _id: { $in: ids } }, { status }, { new: true })
+const blockUsers = (req, res) => {
+  const { ids } = req.body;
+  User.updateMany(
+    { _id: { $in: ids } },
+    { status: "Заблокирован" },
+    { new: true }
+  )
     .orFail()
     .then(() => {
-      return res.send({ message: "Успешно" });
+      return res.send({ message: "User/users blocked" });
     })
     .catch((e) => {
       if (e instanceof mongoose.Error.CastError) {
         return res
           .status(BAD_REQUEST_ERROR_CODE)
-          .send({ message: "Передан некорректный _id пользователя" });
+          .send({ message: "Invalid user _id passed" });
       }
       if (e instanceof mongoose.Error.DocumentNotFoundError) {
         return res
           .status(NOTFOUND_ERROR_CODE)
-          .send({ message: "Пользователь с указанным _id не найден" });
+          .send({ message: "The user with the specified _id was not found" });
       } else {
         return res
           .status(SERVER_ERROR_CODE)
-          .send({ message: "На сервере произошла ошибка", e });
+          .send({ message: "An error occurred on the server" });
+      }
+    });
+};
+
+const unblockUsers = (req, res) => {
+  const { ids } = req.body;
+  User.updateMany(
+    { _id: { $in: ids } },
+    { status: "Разблокирован" },
+    { new: true }
+  )
+    .orFail()
+    .then(() => {
+      return res.send({ message: "User/users unblocked" });
+    })
+    .catch((e) => {
+      if (e instanceof mongoose.Error.CastError) {
+        return res
+          .status(BAD_REQUEST_ERROR_CODE)
+          .send({ message: "Invalid user _id passed" });
+      }
+      if (e instanceof mongoose.Error.DocumentNotFoundError) {
+        return res
+          .status(NOTFOUND_ERROR_CODE)
+          .send({ message: "The user with the specified _id was not found" });
+      } else {
+        return res
+          .status(SERVER_ERROR_CODE)
+          .send({ message: "An error occurred on the server" });
       }
     });
 };
@@ -164,6 +197,7 @@ module.exports = {
   login,
   getUserInfo,
   getUsers,
-  deleteUser,
-  blockUser,
+  deleteUsers,
+  blockUsers,
+  unblockUsers,
 };
